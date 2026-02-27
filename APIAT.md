@@ -700,6 +700,47 @@ curl -X POST "https://webservices1.autotask.net/atservicesrest/TicketNotes" \
 #### 5.6.3. Content Cleaning
 Autotask automatically strips dangerous tags (like `<script>` or `<embed>`) for security. Always verify the rendered output in the Autotask UI during integration testing to ensure your CSS/Tags are supported.
 
+### 5.7. Permissions and Read-Only Validation
+
+Field-level permissions in Autotask vary strictly by the Security Level assigned to the API User. A field editable by an Administrator might be read-only for a restricted technician. Sending a `PATCH` request containing a read-only field will result in an immediate `403 Forbidden` or `500 Internal Server Error`, rejecting the entire payload.
+
+#### 5.7.1. Detecting Read-Only Constraints
+Do not hardcode field permissions. Instead, query the metadata to determine the current API User's access rights.
+
+**Endpoint**: `GET /[Entity]/entityInformation`
+
+**Example Output (Truncated):**
+```json
+{
+  "fields": [
+    {
+      "name": "status",
+      "dataType": "Integer",
+      "isReadOnly": false,
+      "isRequired": true
+    },
+    {
+      "name": "createDateTime",
+      "dataType": "DateTime",
+      "isReadOnly": true,
+      "isRequired": false
+    }
+  ]
+}
+```
+
+#### 5.7.2. Robust Payload Filtering (Pre-Validation)
+The most robust implementation pattern is to build a "Payload Filter" before transmitting updates.
+
+**Implementation Logic for Developers:**
+1. **Cache Metadata**: Download and cache the `/entityInformation` for the entities your app touches.
+2. **Build Dictionary**: Create a map of `{ "fieldName": isReadOnly }`.
+3. **Filter Payload**: Before sending a `PATCH` request, iterate over the keys in your update payload.
+4. **Remove Keys**: If a key corresponds to a field where `isReadOnly == true`, silently drop that property from your JSON payload.
+5. **Transmit**: Send the sanitized payload.
+
+This architecture guarantees that role-based restrictions (which the Autotask admin might change at any time) will never cause your synchronization engine to crash.
+
 ---
 
 ## 6. Pagination and Navigation Guide
