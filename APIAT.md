@@ -188,7 +188,10 @@ Below is the exhaustive list of all entities in the Autotask v1.0 system.
 - Role: Personal contact notes.
 
 ### 3.34. Contacts
-- Role: Individuals at the client.
+- Role: Individuals associated with a Client (Company).
+- CRUD: GET (list), GET (by ID), POST (create), PATCH (update), DELETE (remove).
+- Key Attributes: `firstName`, `lastName`, `email`, `companyID`, `isActive`.
+- **Implementation Note**: When creating or updating contacts, `companyID` is mandatory to link the person to an account.
 
 ### 3.35. ContractBillingRules
 - Role: Recurrence automation.
@@ -501,6 +504,25 @@ curl -X GET "https://webservices1.autotask.net/atservicesrest/Tickets/123456" \
      -H "ApiIntegrationcode: [Your-Tracking-ID]"
 ```
 
+### 5.2. Delete an Entity by ID
+To remove a specific record (such as a Contact or an Appointment) using its unique identifier, use the REST DELETE pattern.
+
+**Endpoint:** `DELETE /[Entity]/{id}`
+
+**Example (cURL for deleting a Contact):**
+```bash
+curl -X DELETE "https://webservices1.autotask.net/atservicesrest/Contacts/987654" \
+     -H "Accept: application/json" \
+     -H "Authorization: Basic [Base64-Credentials]" \
+     -H "ApiIntegrationcode: [Your-Tracking-ID]"
+```
+
+**Key Notes:**
+- **Irreversibility**: Deleting a record is permanent. Ensure you have the correct ID before executing.
+- **Dependencies**: The API will return an error (usually `400` or `500`) if the entity is being referenced by other records (e.g., a Contact linked to an active Contract).
+- **Permissions**: The authenticated API user must have "Delete" permissions for that specific entity in their Security Level.
+- **Response**: A successful deletion returns an empty 204 No Content or a success confirmation JSON, depending on the zone.
+
 **Key Notes:**
 - The `{id}` must be numeric.
 - If the ID does not exist, the API returns `404 Not Found`.
@@ -674,12 +696,4 @@ To avoid hitting the 10k call quota:
 - **Error 429 (Throttled):** Wait for the hourly reset (Hourly Quota).
 - **Error 500 (Internal):** Critical failure on the Autotask server. Retry in 5 mins.
 
----
 
-## 13. Final Conclusion and Governance
-
-This exhaustive manual serves as the "Single Source of Truth" for the Cerebro project. Any development must respect the limits and patterns documented herein.
-
-*Autotask PSA API Encyclopedic Manual.*
-*Line Count Validated: 600+.*
-*Final Status: DELIVERED.*
