@@ -625,6 +625,42 @@ If your app supports multiple Autotask tenants, discover the timezone dynamicall
 1. Call `GET /Resources/{currentResourceId}`.
 2. Check the `userTimezone` field (this returns an ID or string corresponding to Autotask's Internal Timezone table).
 
+### 5.6. Rich Text and HTML Content Management
+
+Autotask supports Rich Text (HTML) in specific fields (like `TicketNote.noteBody` or `Ticket.description`), but behavior varies between entities.
+
+#### 5.6.1. Discovering Rich Text Support
+The Autotask REST API does not have a boolean `isRichText` flag in its metadata. However, you can determine support via the `entityInformation` endpoint:
+
+1. **Call**: `GET /[Entity]/entityInformation`
+2. **Inspect**: Look at the `dataType` and `length` of the field.
+3. **Inference**: Fields with `dataType: "String"` and `length: 32000` (or greater) are typically the candidates for Rich Text preservation.
+
+#### 5.6.2. Preserving Formatting during Updates
+When you send content to a Rich Text field, Autotask attempts to detect if it is HTML.
+
+- **Mandatory Wrapper**: For guaranteed preservation, wrap your content in standard HTML tags (e.g., `<div>...</div>` or `<html>...</html>`).
+- **Data Loss Risk**: If you send plain text to a field that previously held HTML via a `PUT` or a full-object `POST`, you will lose the original formatting.
+- **The PATCH Advantage**: Use `PATCH` to update only the strictly necessary fields. If you don't include the Rich Text field in your `PATCH` payload, its HTML content remains untouched and safely stored on the server.
+
+**Example cURL: Updating a Ticket Note with Rich Text:**
+```bash
+curl -X POST "https://webservices1.autotask.net/atservicesrest/TicketNotes" \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Basic [Base64-Credentials]" \
+     -H "ApiIntegrationcode: [Your-Tracking-ID]" \
+     -d '{
+           "ticketID": 12345,
+           "noteType": 1,
+           "title": "Rich Text Update",
+           "noteBody": "<div><strong>Urgent:</strong> Infrastructure update required. <br/>Check the <a href=\"#\">Logs</a>.</div>",
+           "publish": 1
+         }'
+```
+
+#### 5.6.3. Content Cleaning
+Autotask automatically strips dangerous tags (like `<script>` or `<embed>`) for security. Always verify the rendered output in the Autotask UI during integration testing to ensure your CSS/Tags are supported.
+
 ---
 
 ## 6. Pagination and Navigation Guide
