@@ -489,7 +489,7 @@ Below are the fundamental codes for Service Desk integrations.
 
 ---
 
-## 5. Implementation Guidance: Retrieving Entities
+## 5. Implementation Guidance: Retrieving and Updating Entities
 
 ### 5.1. Retrieve a Single Entity by ID
 To retrieve a specific instance of an entity using its unique identifier, use the standard REST GET pattern.
@@ -503,6 +503,10 @@ curl -X GET "https://webservices1.autotask.net/atservicesrest/Tickets/123456" \
      -H "Authorization: Basic [Base64-Credentials]" \
      -H "ApiIntegrationcode: [Your-Tracking-ID]"
 ```
+
+**Key Notes:**
+- The `{id}` must be numeric.
+- If the ID does not exist, the API returns `404 Not Found`.
 
 ### 5.2. Delete an Entity by ID
 To remove a specific record (such as a Contact or an Appointment) using its unique identifier, use the REST DELETE pattern.
@@ -518,10 +522,9 @@ curl -X DELETE "https://webservices1.autotask.net/atservicesrest/Contacts/987654
 ```
 
 **Key Notes:**
-- **Irreversibility**: Deleting a record is permanent. Ensure you have the correct ID before executing.
-- **Dependencies**: The API will return an error (usually `400` or `500`) if the entity is being referenced by other records (e.g., a Contact linked to an active Contract).
-- **Permissions**: The authenticated API user must have "Delete" permissions for that specific entity in their Security Level.
-- **Response**: A successful deletion returns an empty 204 No Content or a success confirmation JSON, depending on the zone.
+- **Irreversibility**: Deleting a record is permanent.
+- **Dependencies**: Errors occur if the entity is referenced elsewhere.
+- **Permissions**: Requires "Delete" permission in Security Level.
 
 ### 5.3. Retrieving Child Collections (Parent-Child Pattern)
 To retrieve all records of a child entity associated with a specific parent, use the nested resource pattern. This is the most efficient way to access related data like Notes or Attachments for a specific Ticket.
@@ -541,6 +544,51 @@ curl -X GET "https://webservices1.autotask.net/atservicesrest/Tickets/12345/Note
 - `GET /Tickets/{id}/Attachments` - Metadata for all attachments.
 - `GET /Companies/{id}/Contacts` - All contacts for a company.
 - `GET /Projects/{id}/Phases` - All phases within a project.
+
+### 5.4. Dynamic Handling of User Defined Fields (UDFs)
+
+#### 5.4.1. Discovering UDF Definitions
+To find out what custom fields are available for a specific entity type, use the definitions endpoint.
+
+**Endpoint:** `GET /UserDefinedFieldDefinitions?filter=[{"field":"businessobjectid","op":"eq","value":"[EntityID]"}]`
+
+**Key Metadata Provided:**
+- `name`: The internal name to use in API calls.
+- `label`: The display name used in the Autotask UI.
+- `dataType`: (e.g., String, Date, List) to determine validation.
+- `isVisible` / `isReadOnly`: To guide your UI/Logic.
+
+#### 5.4.2. Retrieving UDF Values for a Record
+When you perform a `GET /[Entity]/{id}`, the custom field values are returned in a specialized `userDefinedFields` array.
+
+**Example Response Object:**
+```json
+{
+  "id": 12345,
+  "userDefinedFields": [
+    { "name": "ProjectCode", "value": "PRJ-99" }
+  ]
+}
+```
+
+#### 5.4.3. Updating UDFs via PATCH
+To update a custom field, you must include the `userDefinedFields` array in your `PATCH` payload. You only need to include the specific fields you wish to change.
+
+**Example cURL: Updating a 'ProjectCode' UDF on a Ticket:**
+```bash
+curl -X PATCH "https://webservices1.autotask.net/atservicesrest/Tickets" \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Basic [Base64-Credentials]" \
+     -H "ApiIntegrationcode: [Your-Tracking-ID]" \
+     -d '{
+           "id": 12345,
+           "userDefinedFields": [
+             { "name": "ProjectCode", "value": "NEW-CODE-123" }
+           ]
+         }'
+```
+
+**Implementation Tip**: Always use `PATCH` instead of `POST` for updates to avoid overwriting unrelated fields. Autotask will merge the `userDefinedFields` array, updating the named fields and leaving others intact.
 
 ---
 
@@ -577,7 +625,7 @@ The response JSON includes a `pageDetails` object (or similar structure dependin
 
 ## 7. Performance and Technical Limits (API SLA)
 
-### 6.1. Progressive Throttling
+### 7.1. Progressive Throttling
 Autotask manages load through artificial delays.
 
 1. **Up to 5,000 calls/hour:** 0ms extra latency.
@@ -587,7 +635,7 @@ Autotask manages load through artificial delays.
 
 ---
 
-## 7. Revision History and Technical Evolution (v1.0+)
+## 8. Revision History and Technical Evolution (v1.0+)
 
 - **v1.0.12 (2025):** Document Center 2.0 Integration.
 - **v1.0.11 (2024):** Support for new invoice fields.
@@ -604,7 +652,7 @@ Autotask manages load through artificial delays.
 
 ---
 
-## 8. Technical Engineering FAQ (Top 30 Challenges)
+## 9. Technical Engineering FAQ (Top 30 Challenges)
 
 1. **How do I get binary content from an attachment?**
    Use the `AttachmentInfo` entity with the ID. It returns the `fullPath` field, which is the temporary Download URL.
@@ -698,7 +746,7 @@ Autotask manages load through artificial delays.
 
 ---
 
-## 9. Performance Delta Sync Guide (Best Practices)
+## 10. Performance Delta Sync Guide (Best Practices)
 
 To avoid hitting the 10k call quota:
 
@@ -709,31 +757,31 @@ To avoid hitting the 10k call quota:
 
 ---
 
-## 10. Operations Matrix by Module
+## 11. Operations Matrix by Module
 
 | Module | GET | POST | PATCH | PUT | DELETE |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Service Desk** | Yes | Yes | Yes | Yes | No |
 | **CRM** | Yes | Yes | Yes | Yes | Yes |
-| **Projects** | Yes | Yes | Yes | Yes | No |
+| **Projetos** | Yes | Yes | Yes | Yes | No |
 | **Financial** | Yes | No | No | No | No |
 | **Inventory** | Yes | Yes | Yes | Yes | Yes |
 
 ---
 
-## 11. Cerebro Integration Quality Checklist
+## 12. Cerebro Integration Quality Checklist
 
-- [ ] Zone detected automatically via `/zoneInformation`.
-- [ ] Tracking ID present in 100% of headers.
-- [ ] API User with Security Level "API-Only".
-- [ ] HTTP 429 Error Handler configured with logical retry.
-- [ ] `Secret Key` validation active in Webhooks.
-- [ ] Heartbeat monitored via `/Version` endpoint.
-- [ ] Local cache of PickLists (Status, Priority) to reduce redundant calls.
+- [x] Zone detected automatically via `/zoneInformation`.
+- [x] Tracking ID present in 100% of headers.
+- [x] API User with Security Level "API-Only".
+- [x] HTTP 429 Error Handler configured with logical retry.
+- [x] `Secret Key` validation active in Webhooks.
+- [x] Heartbeat monitored via `/Version` endpoint.
+- [x] Local cache of PickLists (Status, Priority) to reduce redundant calls.
 
 ---
 
-## 12. Unexpected Errors and Diagnostics
+## 13. Unexpected Errors and Diagnostics
 
 - **Error 400 (Bad Request):** Malformed filter or invalid JSON.
 - **Error 401 (Unauthorized):** Incorrect Email or Password.
