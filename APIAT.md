@@ -664,41 +664,57 @@ If your app supports multiple Autotask tenants, discover the timezone dynamicall
 1. Call `GET /Resources/{currentResourceId}`.
 2. Check the `userTimezone` field (this returns an ID or string corresponding to Autotask's Internal Timezone table).
 
-### 5.6. Rich Text and HTML Content Management
+### 5.6. Rich Text and HTML Content Management (Data Loss Mitigation)
 
-Autotask supports Rich Text (HTML) in specific fields (like `TicketNote.noteBody` or `Ticket.description`), but behavior varies between entities.
+Managing formatted text is a common source of bugs (data loss via formatting stripping) in Autotask integrations. Autotask supports Rich Text (HTML) in specific fields, but the behavior is inconsistent across the data model.
 
-#### 5.6.1. Discovering Rich Text Support
-The Autotask REST API does not have a boolean `isRichText` flag in its metadata. However, you can determine support via the `entityInformation` endpoint:
+#### 5.6.1. The Absence of Native Flags
+**CRITICAL NOTE**: There is **no response field** or boolean flag (like `isRichText`) in the Autotask REST API metadata that explicitly indicates if a field supports HTML. 
 
-1. **Call**: `GET /[Entity]/entityInformation`
-2. **Inspect**: Look at the `dataType` and `length` of the field.
-3. **Inference**: Fields with `dataType: "String"` and `length: 32000` (or greater) are typically the candidates for Rich Text preservation.
+Developers must infer capability by combining endpoint knowledge with `entityInformation` metadata:
+- **Indicator 1**: The field's `dataType` is `String`.
+- **Indicator 2**: The field's `length` is typically `32000` or greater (e.g., `TicketNote.noteBody`).
 
-#### 5.6.2. Preserving Formatting during Updates
-When you send content to a Rich Text field, Autotask attempts to detect if it is HTML.
+#### 5.6.2. Entity Behavior Comparison Table
+Entities handle incoming HTML differently. Sending HTML to an entity that does not support it will result in the text being saved as raw strings (e.g., the user sees literal `<p>Hello</p>` instead of formatted text) or the formatting being completely stripped.
 
-- **Mandatory Wrapper**: For guaranteed preservation, wrap your content in standard HTML tags (e.g., `<div>...</div>` or `<html>...</html>`).
-- **Data Loss Risk**: If you send plain text to a field that previously held HTML via a `PUT` or a full-object `POST`, you will lose the original formatting.
-- **The PATCH Advantage**: Use `PATCH` to update only the strictly necessary fields. If you don't include the Rich Text field in your `PATCH` payload, its HTML content remains untouched and safely stored on the server.
+| Entity | Field | Action | Behavior |
+| :--- | :--- | :--- | :--- |
+| **TicketNotes** | `noteBody` | `POST` / `PATCH` | **Preserves**. Renders rich text in Autotask UI. |
+| **Tickets** | `description` | `POST` / `PATCH` | **Preserves**. Renders rich text in Autotask UI. |
+| **Projects** | `description` | `POST` / `PATCH` | **Strips/Raw**. Often renders as raw HTML tags or plain text depending on UI component. |
+| **ActionTypes**| `name` | `POST` / `PATCH` | **Strips/Raw**. Strict plain text only. |
 
-**Example cURL: Updating a Ticket Note with Rich Text:**
-```bash
-curl -X POST "https://webservices1.autotask.net/atservicesrest/TicketNotes" \
-     -H "Content-Type: application/json" \
-     -H "Authorization: Basic [Base64-Credentials]" \
-     -H "ApiIntegrationcode: [Your-Tracking-ID]" \
-     -d '{
-           "ticketID": 12345,
-           "noteType": 1,
-           "title": "Rich Text Update",
-           "noteBody": "<div><strong>Urgent:</strong> Infrastructure update required. <br/>Check the <a href=\"#\">Logs</a>.</div>",
-           "publish": 1
-         }'
+#### 5.6.3. Mitigating Data Loss During Updates (The PATCH Strategy)
+The most severe instance of data loss occurs when retrieving an entity with a Rich Text field (which returns plain text stripped of HTML by default) and then subsequently sending that same stripped text back in a `PUT` or `POST` request, permanently erasing the user's original HTML formatting.
+
+**Programmatic Error Handling & Mitigation Pattern:**
+1. **Never use PUT**: Always use the `PATCH` verb to update entities.
+2. **Exclude Rich Text Fields**: If you are not explicitly trying to change the content of a Rich Text field (like `description`), **remove it completely from your JSON payload**.
+3. **HTML Wrapper Validation**: If you *must* update a Rich Text field, build a pre-flight validator that ensures the payload is strictly wrapped in HTML tags (e.g., checking for `<html><body>...</body></html>`).
+
+**Example: Defensive Python Payload Construction**
+```python
+def create_safe_update_payload(entity_data, fields_to_update):
+    """
+    Prevents data loss by strictly constructing a PATCH payload 
+    containing ONLY the specifically requested fields.
+    """
+    safe_payload = { "id": entity_data["id"] }
+    
+    for field in fields_to_update:
+        if field == "description":
+             # Error Handling: Warn or block if HTML wrapping is missing
+             if not getattr(entity_data, field).startswith("<html"):
+                 raise ValueError("Data Loss Prevention: description must be wrapped in HTML tags to preserve formatting.")
+        
+        safe_payload[field] = entity_data[field]
+        
+    return safe_payload
 ```
 
-#### 5.6.3. Content Cleaning
-Autotask automatically strips dangerous tags (like `<script>` or `<embed>`) for security. Always verify the rendered output in the Autotask UI during integration testing to ensure your CSS/Tags are supported.
+#### 5.6.4. Content Cleaning Security
+Autotask automatically strips dangerous tags (like `<script>` or `<embed>`) for Cross-Site Scripting (XSS) security. Always verify the rendered output in the Autotask UI during integration testing to ensure your desired CSS/Tags are supported by their internal sanitizer.
 
 ### 5.7. Permissions and Read-Only Validation
 
