@@ -602,22 +602,61 @@ Correctly handling dates is one of the most common challenges for Autotask devel
 - **Queries**: When filtering by dates (e.g., `createDateTime gt 2024-05-10T00:00:00Z`), the search engine effectively treats input as **UTC**.
 - **Best Practice**: Always perform queries using UTC suffixes (`Z`) or explicit offsets to avoid ambiguity.
 
-#### 5.5.3. Implementation Guide (Node.js/JavaScript)
-To display a timestamp correctly to an end-user, you must know the timezone offset of your API User.
+#### 5.5.3. Implementation Guide: Parsing and Formatting
 
-**Example: Parsing an Autotask Date (Assumed EST/UTC-5):**
-```javascript
-const apiDate = "2024-05-10T14:30:00"; // Raw from API
-const resourceOffset = "-05:00";       // Configured for your API User
+To correctly interpret and display a timestamp, you must parse the raw string and explicitly attach the timezone offset of your API User. 
 
-// 1. Combine to create a valid ISO string with offset
-const validIso = `${apiDate}${resourceOffset}`;
+**Example 1: Python (using `datetime` and `zoneinfo`)**
+```python
+from datetime import datetime, timezone, timedelta
 
-// 2. Parse into a standard Date object
-const dateObj = new Date(validIso);
+# 1. Raw string from API (No offset)
+api_date_str = "2024-05-10T14:30:00"
 
-// 3. Display in User's Local Browser Time
-console.log(dateObj.toLocaleString()); 
+# 2. Extract resource offset (e.g., Eastern Time: UTC-5)
+# In production, fetch this dynamically or define your known offset
+resource_offset_hours = -5
+resource_tz = timezone(timedelta(hours=resource_offset_hours))
+
+# 3. Parse string into naive datetime
+naive_dt = datetime.strptime(api_date_str, "%Y-%m-%dT%H:%M:%S")
+
+# 4. Make it timezone-aware by replacing tzinfo
+aware_dt = naive_dt.replace(tzinfo=resource_tz)
+
+# 5. Result: A fully aware datetime object
+print(f"Aware Datetime: {aware_dt}") # 2024-05-10 14:30:00-05:00
+
+# 6. Format for final display
+display_format = aware_dt.strftime("%B %d, %Y at %I:%M %p %Z")
+print(f"UI Display: {display_format}") # May 10, 2024 at 02:30 PM UTC-05:00
+```
+
+**Example 2: C# (.NET)**
+```csharp
+using System;
+
+public class AutotaskDateParser
+{
+    public static void Main()
+    {
+        // 1. Raw string from API
+        string apiDate = "2024-05-10T14:30:00";
+        
+        // 2. Resource configuration (e.g., EST)
+        TimeSpan resourceOffset = new TimeSpan(-5, 0, 0); 
+
+        // 3. Parse into unspecified DateTime
+        DateTime parsedDate = DateTime.Parse(apiDate);
+
+        // 4. Combine into a DateTimeOffset to lock the timezone
+        DateTimeOffset finalDate = new DateTimeOffset(parsedDate, resourceOffset);
+
+        // 5. Output
+        Console.WriteLine($"Console: {finalDate:O}"); // 2024-05-10T14:30:00.0000000-05:00
+        Console.WriteLine($"UI Display: {finalDate.ToString("MMMM dd, yyyy h:mm tt")}");
+    }
+}
 ```
 
 #### 5.5.4. Discovering the Resource Timezone
