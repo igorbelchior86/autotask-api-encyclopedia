@@ -763,7 +763,7 @@ To avoid hitting the 10k call quota:
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Service Desk** | Yes | Yes | Yes | Yes | No |
 | **CRM** | Yes | Yes | Yes | Yes | Yes |
-| **Projetos** | Yes | Yes | Yes | Yes | No |
+| **Projects** | Yes | Yes | Yes | Yes | No |
 | **Financial** | Yes | No | No | No | No |
 | **Inventory** | Yes | Yes | Yes | Yes | Yes |
 
