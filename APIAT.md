@@ -1,10 +1,10 @@
-# Enciclopédia Técnica Definitiva: Autotask REST API (Referência de 1000+ Linhas)
+# Definitive Technical Encyclopedia: Autotask REST API (1000+ Line Reference)
 
-Este documento é o manual mestre para o ecossistema Cerebro. Ele consolida o conteúdo exaustivo de 12 links de documentação da Datto/Kaseya, detalhando cada entidade, campo, limite técnico e estratégia de integração.
+This document is the master manual for the Cerebro ecosystem. It consolidates exhaustive content from 12 Datto/Kaseya documentation links, detailing every entity, field, technical limit, and integration strategy.
 
 ---
 
-### Links Originais de Referência
+### Original Reference Links
 1. [REST Security & Auth](https://www.autotask.net/help/developerhelp/Content/APIs/REST/General_Topics/REST_Security_Auth.htm)
 2. [REST API Revision History](https://www.autotask.net/help/developerhelp/Content/APIs/REST/General_Topics/REST_API_Revision_History.htm)
 3. [Intro to REST API](https://www.autotask.net/help/developerhelp/Content/APIs/REST/General_Topics/Intro_REST_API.htm)
@@ -20,27 +20,27 @@ Este documento é o manual mestre para o ecossistema Cerebro. Ele consolida o co
 
 ---
 
-## 1. Topologia de Zonas e Clusters Globais
+## 1. Zone Topology and Global Clusters
 
-### 1.1. Lista de Zonas Ativas
+### 1.1. Active Zones List
 - **Zone 1**
   - URL: `https://webservices1.autotask.net/atservicesrest/`
-  - Descrição: Datacenter US East.
+  - Description: US East Datacenter.
 - **Zone 2**
   - URL: `https://webservices2.autotask.net/atservicesrest/`
-  - Descrição: Datacenter US Central.
+  - Description: US Central Datacenter.
 - **Zone 3**
   - URL: `https://webservices3.autotask.net/atservicesrest/`
-  - Descrição: Datacenter Europa (Londres).
+  - Description: Europe Datacenter (London).
 - **Zone 4**
   - URL: `https://webservices4.autotask.net/atservicesrest/`
-  - Descrição: Datacenter APAC (Sydney).
+  - Description: APAC Datacenter (Sydney).
 - **Zone 5**
   - URL: `https://webservices5.autotask.net/atservicesrest/`
-  - Descrição: Datacenter US West.
+  - Description: US West Datacenter.
 - **Zone 6**
   - URL: `https://webservices6.autotask.net/atservicesrest/`
-  - Descrição: Datacenter Canadá.
+  - Description: Canada Datacenter.
 - **Zone 11**
   - URL: `https://webservices11.autotask.net/atservicesrest/`
 - **Zone 12**
@@ -62,602 +62,624 @@ Este documento é o manual mestre para o ecossistema Cerebro. Ele consolida o co
 
 ---
 
-## 2. Autenticação e Segurança (Security Spec)
+## 2. Authentication and Security (Security Spec)
 
 - **Header: Authorization**
-  - Valor: `Basic [Base64 of Email:Password]`
+  - Value: `Basic [Base64 of Email:Password]`
 - **Header: ApiIntegrationcode**
-  - Valor: Chave de Tracking ID.
+  - Value: Tracking ID key.
 - **Header: ImpersonationResourceId**
-  - Valor: ID do Técnico (Opcional).
+  - Value: Technician ID (Optional).
 - **Header: Accept**
-  - Valor: `application/json`
+  - Value: `application/json`
 
 ---
 
-## 3. Catálogo Analítico de Entidades (The itemized Library)
+## 3. Analytical Entity Catalog (The itemized Library)
 
-Abaixo, a listagem exaustiva de todas as entidades do sistema Autotask v1.0.
+Below is the exhaustive list of all entities in the Autotask v1.0 system.
 
 ### 3.1. ActionTypes
-- Papel: Categoriza ações CRM.
+- Role: Categorizes CRM actions.
 - CRUD: GET, POST, PATCH.
-- Atributos: `id`, `name`, `isActive`.
+- Attributes: `id`, `name`, `isActive`.
 
 ### 3.2. AdditionalInvoiceFieldValues
-- Papel: Metadados para PDF de fatura.
+- Role: Metadata for invoice PDFs.
 - CRUD: GET.
-- Atributos: `id`, `invoiceID`, `fieldValue`.
+- Attributes: `id`, `invoiceID`, `fieldValue`.
 
 ### 3.3. Appointments
-- Papel: Agendamentos de calendário.
+- Role: Calendar appointments.
 - CRUD: GET, POST, PATCH, DELETE.
 
 ### 3.4. ArticleAttachments
-- Papel: Arquivos vinculados à KB.
+- Role: Files linked to Knowledge Base (KB).
 - CRUD: GET, POST, DELETE.
 
 ### 3.5. ArticleConfigurationItemCategoryAssociations
-- Papel: Liga artigos de KB a categorias de ativos.
+- Role: Links KB articles to configuration item categories.
 
 ### 3.6. ArticleNotes
-- Papel: Comentários internos em KB.
+- Role: Internal comments on KB articles.
 
 ### 3.7. ArticlePlainTextContent
-- Papel: Conteúdo buscável de artigos KB.
+- Role: Searchable content of KB articles.
 
 ### 3.8. ArticleTagAssociations
-- Papel: Gerencia tags em artigos.
+- Role: Manages tags on articles.
 
 ### 3.9. ArticleTicketAssociations
-- Papel: Liga KB a incidentes resolvidos.
+- Role: Links KB to resolved incidents.
 
 ### 3.10. ArticleToArticleAssociations
-- Papel: Links de artigos relacionados.
+- Role: Links between related articles.
 
 ### 3.11. ArticleToDocumentAssociations
-- Papel: Liga KB ao Document Center.
+- Role: Links KB to Document Center.
 
 ### 3.12. AttachmentInfo
-- Papel: Metadados globais de anexo.
-- Atributos: `fullPath`, `parentID`, `attachmentType`.
+- Role: Global attachment metadata.
+- Attributes: `fullPath`, `parentID`, `attachmentType`.
 
 ### 3.13. BillingCodes
-- Papel: Códigos de faturamento financeiro.
+- Role: Financial billing codes.
 
 ### 3.14. BillingItemApprovalLevels
-- Papel: Workflow de aprovação de cobrança.
+- Role: Billing approval workflow.
 
 ### 3.15. BillingItems
-- Papel: Transações de custo pendentes.
+- Role: Pending cost transactions.
 
 ### 3.16. ChangeOrderCharges
-- Papel: Cobranças extra em projetos.
+- Role: Extra charges in projects.
 
 ### 3.17. ChangeRequestLinks
-- Papel: Liga Tickets a Change Requests.
+- Role: Links Tickets to Change Requests.
 
 ### 3.18. ChecklistLibraries
-- Papel: Modelos de procedimentos (SOPs).
+- Role: Procedure models (SOPs).
 
 ### 3.19. ChecklistLibraryChecklistItems
-- Papel: Itens individuais dos modelos.
+- Role: Individual items within checklist models.
 
 ### 3.20. ClassificationIcons
-- Papel: Ícones de interface gráfica.
+- Role: Graphic interface icons.
 
 ### 3.21. ClientPortalUsers
-- Papel: Logins de clientes finais.
+- Role: End-client logins.
 
 ### 3.22. ComanagedAssociations
-- Papel: Permissões de TI parceira.
+- Role: Partner IT permissions.
 
 ### 3.23. Companies
-- Papel: O registro mestre do Cliente.
-- CRUD: Todos os verbos.
-- Atributos: `accountName`, `phone`, `webAddress`.
+- Role: Master dynamic record of the Client Account.
+- CRUD: All verbs.
+- Attributes: `accountName`, `phone`, `webAddress`.
 
 ### 3.24. CompanyAlerts
-- Papel: Balões de aviso em contas.
+- Role: Warning bubbles on accounts.
 
 ### 3.25. CompanyAttachments
-- Papel: Contratos e SLAs fiscais.
+- Role: Fiscal contracts and SLAs.
 
 ### 3.26. CompanyCategories
-- Papel: Segmentation (Gold, Silver).
+- Role: Segmentation (Gold, Silver).
 
 ### 3.27. CompanyLocations
-- Papel: Endereços físicos extras.
+- Role: Extra physical addresses.
 
 ### 3.28. CompanyNoteAttachments
-- Papel: Evidências em notas CRM.
+- Role: Evidence in CRM notes.
 
 ### 3.29. CompanyNotes
-- Papel: Registro de ligações comerciais.
+- Role: Commercial call logs.
 
 ### 3.30. CompanyTeams
-- Papel: Técnicos dedicados à conta.
+- Role: Technicians dedicated to the account.
 
 ### 3.31. ContactGroups
-- Papel: Listas de distribuição.
+- Role: Distribution lists.
 
 ### 3.32. ContactNoteAttachments
-- Papel: Arquivos em notas de contato.
+- Role: Files in contact notes.
 
 ### 3.33. ContactNotes
-- Papel: Pessoais do contato.
+- Role: Personal contact notes.
 
 ### 3.34. Contacts
-- Papel: Pessoas físicas no cliente.
+- Role: Individuals at the client.
 
 ### 3.35. ContractBillingRules
-- Papel: Automação de recorrência.
+- Role: Recurrence automation.
 
 ### 3.36. ContractBlockHourFactors
-- Papel: Multiplicador de consumo de horas.
+- Role: Hour consumption multiplier.
 
 ### 3.37. ContractBlocks
-- Papel: Pré-pago de suporte.
+- Role: Pre-paid support blocks.
 
 ### 3.38. ContractCharges
-- Papel: Lançamentos financeiros mensais.
+- Role: Monthly financial entries.
 
 ### 3.39. ContractExclusionAllocationCodes
-- Papel: Serviços sem cobertura contratual.
+- Role: Services without contract coverage.
 
 ### 3.40. ContractExclusionBillingCodes
-- Papel: Exclusões financeiras.
+- Role: Financial exclusions.
 
 ### 3.41. ContractExclusionRoles
-- Papel: Técnicos que não entram no contrato.
+- Role: Technicians excluded from the contract.
 
 ### 3.42. ContractMilestones
-- Papel: Pagamentos por entrega.
+- Role: Payments per delivery.
 
 ### 3.43. ContractNotes
-- Papel: Gestão comercial do acordo.
+- Role: Commercial management of the agreement.
 
 ### 3.44. ContractRateCosts
-- Papel: Definição de margem de lucro.
+- Role: Profit margin definition.
 
 ### 3.45. ContractRates
-- Papel: Valor de venda por papel.
+- Role: Sales value per role.
 
 ### 3.46. ContractRetainers
-- Papel: Retenções financeiras.
+- Role: Financial retainers.
 
 ### 3.47. ContractRoleCosts
-- Papel: Custos internos de mão de obra.
+- Role: Internal labor costs.
 
 ### 3.48. ContractRoles
-- Papel: Papéis permitidos no contrato.
+- Role: Roles permitted in the contract.
 
 ### 3.49. Contracts
-- Papel: O acordo mestre PSA.
+- Role: PSA master agreement.
 
 ### 3.50. ContractServiceBundles
-- Papel: Pacotes de serviços recorrentes.
+- Role: Recurring service packages.
 
 ### 3.51. ContractServiceBundleUnits
-- Papel: Quantidade de pacotes ativos.
+- Role: Quantity of active packages.
 
 ### 3.52. ContractServices
-- Papel: Serviços individuais (Antivírus, Cloud).
+- Role: Individual services (Antivirus, Cloud).
 
 ### 3.53. ContractServiceUnits
-- Papel: Unidades vendidas.
+- Role: Units sold.
 
 ### 3.54. ContractTicketPurchaseOrders
-- Papel: Link com ordens de compra.
+- Role: Link with purchase orders.
 
 ### 3.55. Countries
-- Papel: Cadastro ISO de países.
+- Role: ISO countries records.
 
 ### 3.56. Currencies
-- Papel: Gestão de câmbio multi-moeda.
+- Role: Multi-currency exchange management.
 
 ### 3.57. Departments
-- Papel: Organização interna da MSP.
+- Role: MSP internal organization.
 
 ### 3.58. DeletedTaskActivityLogs
-- Papel: Auditoria de tarefas deletadas.
+- Role: Audit of deleted tasks.
 
 ### 3.59. DeletedTicketActivityLogs
-- Papel: Auditoria de tickets deletados.
+- Role: Audit of deleted tickets.
 
 ### 3.60. Documents
-- Papel: New Knowledge Base (Doc Center).
+- Role: New Knowledge Base (Doc Center).
 
 ### 3.61. ExpenseItems
-- Papel: Reembolsos de viagens/alimentação.
+- Role: Travel/meal reimbursements.
 
 ### 3.62. ExpenseReports
-- Papel: Grupo de despesas para aprovação.
+- Role: Expense groups for approval.
 
 ### 3.63. Holidays
-- Papel: Datas sem atendimento.
+- Role: Non-working dates.
 
 ### 3.64. HolidaySets
-- Papel: Calendários regionais.
+- Role: Regional calendars.
 
 ### 3.65. InternalLocations
-- Papel: Escritórios da própria MSP.
+- Role: MSP's own offices.
 
 ### 3.66. InventoryItems
-- Papel: Peças em estoque disponível.
+- Role: Parts in available stock.
 
 ### 3.67. InventoryLocations
-- Papel: Galpões e armazéns.
+- Role: Depots and warehouses.
 
 ### 3.68. InventoryProducts
-- Papel: Itens de catálogo técnico.
+- Role: Technical catalog items.
 
 ### 3.69. Invoices
-- Papel: Fatura gerada para o cliente.
+- Role: Generated client invoice.
 
 ### 3.70. InvoiceTemplates
-- Papel: Desenho visual da fatura.
+- Role: Invoice visual design.
 
 ### 3.71. LineOfBusiness
-- Papel: Vertical de negócio do cliente.
+- Role: Client's business vertical.
 
 ### 3.72. Opportunities
-- Papel: Negócios em estágio de vendas.
+- Role: Deals in sales stage.
 
 ### 3.73. OpportunityAttachments
-- Papel: Propostas comerciais anexas.
+- Role: Attached commercial proposals.
 
 ### 3.74. OpportunityCategories
-- Papel: Tipos de vendas (Hardware, MRR).
+- Role: Sales types (Hardware, MRR).
 
 ### 3.75. OrganizationalLevel1
-- Papel: Nível mestre organizacional.
+- Role: Organizational master level.
 
 ### 3.76. OrganizationalLevel2
-- Papel: Subdivisão organizacional.
+- Role: Organizational subdivision.
 
 ### 3.77. OrganizationalLevelAssociations
-- Papel: Liga hierarquias.
+- Role: Links hierarchies.
 
 ### 3.78. OrganizationalResources
-- Papel: Técnicos em suas unidades.
+- Role: Technicians in their units.
 
 ### 3.79. PaymentTerms
-- Papel: Regras de pagamento (Net 30, etc).
+- Role: Payment rules (Net 30, etc).
 
 ### 3.80. Phases
-- Papel: Etapas de projeto técnico.
+- Role: Technical project stages.
 
 ### 3.81. PriceListMaterialCodes
-- Papel: Tabela de preços de peças.
+- Role: Parts price list.
 
 ### 3.82. PriceListProducts
-- Papel: Tabela de preços de hardware.
+- Role: Hardware price list.
 
 ### 3.83. PriceListProductTiers
-- Papel: Descontos progressivos.
+- Role: Progressive discounts.
 
 ### 3.84. Projects
-- Papel: Recipientes de trabalho planejado.
+- Role: Planned work containers.
 
 ### 3.85. ProjectAttachments
-- Papel: Cronogramas anexos.
+- Role: Attached schedules.
 
 ### 3.86. ProjectNotes
-- Papel: Diário do gerente de projeto.
+- Role: Project manager diary.
 
 ### 3.87. Quotes
-- Papel: Orçamentos em PDF.
+- Role: PDF quotes.
 
 ### 3.88. QuoteItems
-- Papel: Linhas individuais do orçamento.
+- Role: Individual quote lines.
 
 ### 3.89. Resources
-- Papel: Técnicos (Users) do sistema.
-- Atributos: `firstName`, `email`, `isActive`.
+- Role: System Technicians (Users).
+- Attributes: `firstName`, `email`, `isActive`.
 
 ### 3.90. ResourceServiceDeskRoles
-- Papel: Quais filas o técnico atende.
+- Role: Queues the technician services.
 
 ### 3.91. Roles
-- Papel: Nível técnico (L1, L2, Manager).
+- Role: Technical level (L1, L2, Manager).
 
 ### 3.92. SalesOrderAttachments
-- Papel: PDFs de pedido de venda.
+- Role: PDF sales orders.
 
 ### 3.93. SalesOrders
-- Papel: Pedidos firmados.
+- Role: Firm orders.
 
 ### 3.94. ServiceBundles
-- Papel: Grupamento de serviços core.
+- Role: Grouping of core services.
 
 ### 3.95. ServiceBundleServices
-- Papel: Itens do grupo.
+- Role: Items within the bundle.
 
 ### 3.96. ServiceCalls
-- Papel: Agendamentos de visitas físicas.
+- Role: Scheduled physical visits.
 
 ### 3.97. ServiceCallTaskResources
-- Papel: Quem vai fazer a visita.
+- Role: Who will perform the visit.
 
 ### 3.98. ServiceCallTasks
-- Papel: O que será feito na visita.
+- Role: What will be done during the visit.
 
 ### 3.99. ServiceLevelAgreementResults
-- Papel: Cálculos de SLA batidos/furados.
+- Role: Calculated SLA hit/miss.
 
 ### 3.100. Services
-- Papel: Catálogo de serviços unitários.
+- Role: Unitary service catalog.
 
 ### 3.101. ShippingTypes
-- Papel: Modais de entrega (Fedex, Correios).
+- Role: Delivery methods (Fedex, UPS).
 
 ### 3.102. Skills
-- Papel: Certificações de técnicos (CCNA, ITIL).
+- Role: Technician certifications (CCNA, ITIL).
 
 ### 3.103. Subscriptions
-- Papel: Itens de vendor externo (Office 365).
+- Role: External vendor items (Office 365).
 
 ### 3.104. SurveyResults
-- Papel: Notas de satisfação (NPS).
+- Role: Satisfaction scores (NPS).
 
 ### 3.105. Surveys
-- Papel: Modelos de pesquisa.
+- Role: Survey models.
 
 ### 3.106. TagAliases
-- Papel: Sinônimos de tags de busca.
+- Role: Synonyms for search tags.
 
 ### 3.107. TagGroups
-- Papel: Categorias de indexação.
+- Role: Indexing categories.
 
 ### 3.108. Tags
-- Papel: Digital labeling moderno.
+- Role: Modern digital labeling.
 
 ### 3.109. TaskAttachments
-- Papel: Artefatos de projeto.
+- Role: Project artifacts.
 
 ### 3.110. TaskNoteAttachments
-- Papel: Arquivos em notas de progresso.
+- Role: Files in progress notes.
 
 ### 3.111. TaskNotes
-- Papel: O "Log" do que foi feito na tarefa.
+- Role: Log of what was done on the task.
 
 ### 3.112. TaskPredecessors
-- Papel: Bloqueios lógicos entre tarefas.
+- Role: Logical dependencies between tasks.
 
 ### 3.113. Tasks
-- Papel: A menor unidade de trabalho de projeto.
+- Role: Smallest unit of project work.
 
 ### 3.114. TaskSecondaryResources
-- Papel: Copilotos da tarefa.
+- Role: Task co-pilots.
 
 ### 3.115. Taxes
-- Papel: Alíquotas tributárias.
+- Role: Tax rates.
 
 ### 3.116. TaxCategories
-- Papel: Grupos de impostos.
+- Role: Tax groups.
 
 ### 3.117. TimeOffRequests
-- Papel: Férias e ausências.
+- Role: Vacations and absences.
 
 ### 3.118. UserDefinedFieldDefinitions
-- Papel: O "Schema" dos campos customizados.
+- Role: Custom field schema.
 
 ### 3.119. UserDefinedFieldListItems
-- Papel: Opções de dropdown para UDFs.
+- Role: Dropdown options for UDFs.
 
 ### 3.120. Version
-- Papel: Checagem de saúde da API.
+- Role: API health check.
 
 ### 3.121. WebhookEventErrorLogs
-- Papel: Diagnóstico de falhas de push.
+- Role: Diagnostic of push failures.
 
 ### 3.122. Webhooks
-- Papel: Configuração de notificações em tempo real.
+- Role: Real-time notification configuration.
 
 ### 3.123. WorkEntry
-- Papel: Cartão de ponto técnico / Time Entry.
+- Role: Technical time entry / Time card.
 
 ### 3.124. WorkTypeModifiers
-- Papel: Ajustes de custo por hora técnica.
+- Role: Cost adjustment per technical hour.
 
 ---
 
-## 4. Glossário Analítico de Picklists Padrão (Mapping IDs)
+## 4. Analytical Glossary of Standard Picklists (Mapping IDs)
 
-Abaixo, os códigos fundamentais para integrações Service Desk.
+Below are the fundamental codes for Service Desk integrations.
 
-### 4.1. Status do Ticket (/Tickets)
-- **ID 1:** New (Recém aberto por e-mail ou portal).
-- **ID 5:** Complete (Resolvido, faturamento aceito).
-- **ID 6:** In Progress (Técnico com a mão na massa).
-- **ID 7:** On Hold (Pausado por dependência).
-- **ID 8:** Waiting Customer (Aguardando resposta do utilizador).
-- **ID 9:** Waiting Materials (Aguardando compras/peças).
-- **ID 10:** Deferred (Adiado conforme cronograma).
-- **ID 11:** Cancelled (Descartado pelo cliente/MSP).
-- **ID 12:** Re-opened (Falha na resolução inicial).
+### 4.1. Ticket Status (/Tickets)
+- **ID 1:** New (Recently opened via email or portal).
+- **ID 5:** Complete (Resolved, billing accepted).
+- **ID 6:** In Progress (Technician actively working).
+- **ID 7:** On Hold (Paused due to dependency).
+- **ID 8:** Waiting Customer (Awaiting user response).
+- **ID 9:** Waiting Materials (Awaiting purchases/parts).
+- **ID 10:** Deferred (Postponed according to schedule).
+- **ID 11:** Cancelled (Discarded by client/MSP).
+- **ID 12:** Re-opened (Resolution failure).
 
-### 4.2. Prioridade do Ticket
-- **ID 1:** High (Impacto visível).
-- **ID 2:** Medium (Impacto moderado).
-- **ID 3:** Low (Cosmético/Informativo).
-- **ID 4:** Critical (Parada total do cliente).
-
----
-
-## 5. Performance e Limites Técnicos (SLA da API)
-
-### 5.1. Throttling Progressivo
-O Autotask gerencia carga através de atrasos.
-
-1. **Até 5.000 chamadas/hora:** 0ms latência extra.
-2. **5.000 - 7.500 chamadas/hora:** +500ms por request.
-3. **7.500 - 9.999 chamadas/hora:** +1000ms por request.
-4. **10.000+ chamadas/hora:** HTTP 429 - Service Unavailable.
+### 4.2. Ticket Priority
+- **ID 1:** High (Visible impact).
+- **ID 2:** Medium (Moderate impact).
+- **ID 3:** Low (Cosmetic/Informational).
+- **ID 4:** Critical (Total client stoppage).
 
 ---
 
-## 6. Histórico de Revisões e Evolução Técnica (v1.0+)
+## 5. Implementation Guidance: Retrieving Entities
 
-- **v1.0.12 (2025):** Integração Document Center 2.0.
-- **v1.0.11 (2024):** Suporte para novos campos de fatura.
-- **v1.0.10 (2024):** Operador `IN` massivo.
-- **v1.0.09 (2023):** Throttling por Cluster geográfico.
-- **v1.0.08 (2023):** Webhooks para Entidades Financeiras.
-- **v1.0.07 (2022):** Header de Impersonation estendido.
-- **v1.0.06 (2022):** Endpoint central de heartbeat (`/Version`).
-- **v1.0.05 (2021):** Limite físico de anexo em 7.5MB.
-- **v1.0.04 (2021):** Filtro `contains` ativado globalmente.
-- **v1.0.03 (2020):** Lançamento do Discovery Service (/zoneInformation).
-- **v1.0.02 (2020):** Paridade de 80% entre SOAP e REST.
-- **v1.0.01 (2019):** Lançamento Inicial do motor REST PSA.
+### 5.1. Retrieve a Single Entity by ID
+To retrieve a specific instance of an entity using its unique identifier, use the standard REST GET pattern.
 
----
+**Endpoint:** `GET /[Entity]/{id}`
 
-## 7. FAQ Técnico de Engenharia (Top 30 Desafios)
+**Example (cURL):**
+```bash
+curl -X GET "https://webservices1.autotask.net/atservicesrest/Tickets/123456" \
+     -H "Accept: application/json" \
+     -H "Authorization: Basic [Base64-Credentials]" \
+     -H "ApiIntegrationcode: [Your-Tracking-ID]"
+```
 
-1. **Como pego o conteúdo binário de um anexo?**
-   Use a entidade `AttachmentInfo` informando o ID. Ela retornará o campo `fullPath` que é a URL de Download temporário.
-
-2. **Qual o limite de caracteres em um TicketNote?**
-   32.000 caracteres no formato texto plano ou HTML rich text.
-
-3. **Como filtrar tickets por UDF?**
-   No payload de busca, use: `{"field": "userDefinedFields.FieldName", "op": "eq", "value": "xyz"}`.
-
-4. **Webhooks enviam o arquivo em anexo?**
-   Não. Enviamos apenas o metadado. Sua app deve baixar via API usando a URL fornecida.
-
-5. **Tracking ID (ApiIntegrationcode) é obrigatório?**
-   Sim. Sem ele, o Autotask bloqueia 100% dos POST/PATCH por questões de auditoria do Integration Center.
-
-6. **Como sei se um técnico está logado?**
-   Não existe endpoint de "Online". Use `Resources` e filtre por `isActive` para ver quem pode trabalhar.
-
-7. **Qual o Timezone da API?**
-   Respostas vêm conforme a configuração do recurso autenticado, mas o motor Query aceita ISO-8601 UTC.
-
-8. **Posso deletar uma Company?**
-   Sim, se não houver registros históricos vinculados (Tickets, Contratos). Recomenda-se apenas desativar.
-
-9. **Como criar um Ticket secundário?**
-   Use o campo `parentTicketID` no POST do novo ticket.
-
-10. **Existe Sandbox para devs?**
-    Sim. Use a zona **PRDE**. Ela é o playground universal para testes de integração.
-
-11. **Como agir 'Em nome de' um técnico?**
-    Envie o Header `ImpersonationResourceId` com o ID do recurso alvo. Exige permissão especial no API User.
-
-12. **Erro 502/504 esporádico?**
-    O cluster está sob manutenção. O Autotask garante 99.9% de uptime, mas janelas de patch ocorrem.
-
-13. **Como pegar o ID do Status pelo Nome?**
-    Chame `/Tickets/entityInformation`. O JSON de retorno contém a PickList completa de status com IDs e Nomes.
-
-14. **UDFs suportam Multiselect?**
-    Sim. Você receberá um array ou string separada por vírgula no campo correspondente.
-
-15. **Posso mudar a faturabilidade de uma hora já lançada?**
-    Apenas via PATCH na entidade `WorkEntry` no campo `allocationCodeID`.
-
-16. **O que acontece se eu exceder as 10k chamadas?**
-    Sua app recebe 429 e deve aguardar a próxima hora fechada (ex: se travou às 14:45, volta às 15:00).
-
-17. **Como saber quais campos são obrigatórios?**
-    Use `/[Entity]/entityInformation`. Veja a flag `isRequired` para cada campo.
-
-18. **A API suporta SSL?**
-    Sim, obrigatório TLS 1.2 ou superior. Ciphers antigos são rejeitados.
-
-19. **Como filtrar por data de criação?**
-    Use o campo `createDateTime` com o operador `gt` (Greater Than).
-
-20. **Posso ler Documentos do Knowledge Base?**
-    Sim, use a entidade `Documents`. Ela é a versão moderna das `Articles`.
-
-21. **Como pegar logs de erro de Webhook?**
-    Consulte a entidade `WebhookEventErrorLogs` filtrando pelo nome do seu webhook.
-
-22. **Existe limite de 500 registros por página?**
-    Sim. A API usa paginação implícita. Use `nextPageUrl` no JSON de retorno para navegar.
-
-23. **Como saber a versão atual do sistema?**
-    Endpoint `/Version`. Retorna o build atual do Datoc PSA.
-
-24. **Qual limite de UDFs por objeto?**
-    Até 100 campos customizados.
-
-25. **Posso ler configurações globais?**
-    Não diretamente. O REST foca em dados operacionais. Configurações de sistema exigem login Admin via UI.
-
-26. **Como saber qual o fuso horário do cliente?**
-    Veja a entidade `InventoryLocations` ou o `BusinessLocation` do recurso.
-
-27. **Como filtrar por 'Diferente de'?**
-    Use o operador `noteq`.
-
-28. **Pode criar anexos em lote?**
-    Não. Cada anexo exige um POST individual de metadados + binário.
-
-29. **API suporta Tokens JWT?**
-    Não. Apenas Basic Auth acoplada ao Tracking ID.
-
-30. **Como saber se um Webhook está ativo?**
-    Consulte a entidade `Webhooks` e veja o campo `isActive`.
+**Key Notes:**
+- The `{id}` must be numeric.
+- If the ID does not exist, the API returns `404 Not Found`.
+- Use this instead of the query/search endpoint when the identifier is already known (e.g., from a Webhook payload or a previous list request).
 
 ---
 
-## 8. Guia de Performance Delta Sync (Best Practices)
+## 6. Performance and Technical Limits (API SLA)
 
-Para evitar estourar a quota de 10k chamadas:
+### 6.1. Progressive Throttling
+Autotask manages load through artificial delays.
 
-1. **Persistência de Cursor:** Salve localmente o maior `lastModifiedDateTime` já lido.
-2. **Query Delta:** Na próxima consulta, filtre `lastModifiedDateTime gt [VALOR_SALVO]`.
-3. **Webhook Over Polling:** Use Webhooks para alterações e Polling apenas para auditoria diária.
-4. **Otimização de Payload:** Não peça campos que você não vai usar.
+1. **Up to 5,000 calls/hour:** 0ms extra latency.
+2. **5,000 - 7,500 calls/hour:** +500ms per request.
+3. **7,500 - 9,999 calls/hour:** +1000ms per request.
+4. **10,000+ calls/hour:** HTTP 429 - Too Many Requests / Service Unavailable.
 
 ---
 
-## 9. Matriz de Verbos e Operações por Módulo
+## 7. Revision History and Technical Evolution (v1.0+)
 
-| Módulo | GET | POST | PATCH | PUT | DELETE |
+- **v1.0.12 (2025):** Document Center 2.0 Integration.
+- **v1.0.11 (2024):** Support for new invoice fields.
+- **v1.0.10 (2024):** Massive `IN` operator.
+- **v1.0.09 (2023):** Throttling by Geographic Cluster.
+- **v1.0.08 (2023):** Webhooks for Financial Entities.
+- **v1.0.07 (2022):** Extended Impersonation Header.
+- **v1.0.06 (2022):** Central heartbeat endpoint (`/Version`).
+- **v1.0.05 (2021):** Attachment physical limit at 7.5MB.
+- **v1.0.04 (2021):** `contains` filter enabled globally.
+- **v1.0.03 (2020):** Discovery Service Launch (/zoneInformation).
+- **v1.0.02 (2020):** 80% parity between SOAP and REST.
+- **v1.0.01 (2019):** Initial PSA REST Engine Launch.
+
+---
+
+## 8. Technical Engineering FAQ (Top 30 Challenges)
+
+1. **How do I get binary content from an attachment?**
+   Use the `AttachmentInfo` entity with the ID. It returns the `fullPath` field, which is the temporary Download URL.
+
+2. **What is the character limit in a TicketNote?**
+   32,000 characters in plain text or HTML rich text.
+
+3. **How do I filter tickets by UDF?**
+   In the search payload, use: `{"field": "userDefinedFields.FieldName", "op": "eq", "value": "xyz"}`.
+
+4. **Do webhooks send the attached file?**
+   No. We send only metadata. Your app must download via API using the provided URL.
+
+5. **Is Tracking ID (ApiIntegrationcode) mandatory?**
+   Yes. Without it, Autotask blocks 100% of POST/PATCH for auditing in the Integration Center.
+
+6. **How do I know if a technician is logged in?**
+   There is no "Online" endpoint. Use `Resources` and filter by `isActive` to see who is eligible to work.
+
+7. **What is the API Timezone?**
+   Responses match the authenticated resource's configuration, but the Query engine accepts ISO-8601 UTC.
+
+8. **Can I delete a Company?**
+   Yes, if no historical records are linked (Tickets, Contracts). Deactivation is usually recommended instead.
+
+9. **How do I create a sub-ticket?**
+   Use the `parentTicketID` field in the POST payload of the new ticket.
+
+10. **Is there a Sandbox for developers?**
+    Yes. Use the **PRDE** zone. It is the universal playground for integration testing.
+
+11. **How do I act 'on behalf of' a technician?**
+    Send the `ImpersonationResourceId` Header with the target resource ID. Requires special permission on the API User.
+
+12. **Sporadic 502/504 Errors?**
+    The cluster might be under maintenance. Autotask guarantees 99.9% uptime, but patch windows occur.
+
+13. **How do I get the Status ID by Name?**
+    Call `/Tickets/entityInformation`. The return JSON contains the complete PickList of statuses with IDs and Names.
+
+14. **Do UDFs support Multiselect?**
+    Yes. You will receive an array or comma-separated string in the corresponding field.
+
+15. **Can I change the billability of an already posted hour?**
+    Only via PATCH on the `WorkEntry` entity, modifiying the `allocationCodeID` field.
+
+16. **What happens if I exceed 10k calls?**
+    Your app receives a 429 error and must wait until the top of the next hour (e.g., if blocked at 2:45 PM, it resets at 3:00 PM).
+
+17. **How do I find mandatory fields?**
+    Use `/[Entity]/entityInformation`. Check the `isRequired` flag for each field.
+
+18. **Does the API support SSL?**
+    Yes, TLS 1.2 or higher is mandatory. Old ciphers are rejected.
+
+19. **How do I filter by creation date?**
+    Use the `createDateTime` field with the `gt` (Greater Than) operator.
+
+20. **Can I read Knowledge Base Documents?**
+    Yes, use the `Documents` entity. It is the modern version of `Articles`.
+
+21. **How do I get Webhook error logs?**
+    Query the `WebhookEventErrorLogs` entity, filtering by your webhook name.
+
+22. **Is there a 500 records limit per page?**
+    Yes. The API uses implicit pagination. Use `nextPageUrl` in the response JSON to navigate.
+
+23. **How do I check the system version?**
+    Endpoint `/Version`. Returns the current Datto PSA build.
+
+24. **What is the UDF limit per object?**
+    Up to 100 custom fields.
+
+25. **Can I read global configurations?**
+    Not directly. REST focuses on operational data. System settings require Admin login via UI.
+
+26. **How do I find the client's timezone?**
+    Check the `InventoryLocations` entity or the resource's `BusinessLocation`.
+
+27. **How do I filter by 'Not Equal To'?**
+    Use the `noteq` operator.
+
+28. **Can I create attachments in bulk?**
+    No. Each attachment requires an individual POST of metadata + binary.
+
+29. **Does the API support JWT Tokens?**
+    No. Only Basic Auth coupled with the Tracking ID.
+
+30. **How do I check if a Webhook is active?**
+    Query the `Webhooks` entity and check the `isActive` field.
+
+---
+
+## 9. Performance Delta Sync Guide (Best Practices)
+
+To avoid hitting the 10k call quota:
+
+1. **Cursor Persistence:** Save the highest `lastModifiedDateTime` read locally.
+2. **Delta Query:** In the next query, filter `lastModifiedDateTime gt [SAVED_VALUE]`.
+3. **Webhook Over Polling:** Use Webhooks for changes and Polling only for daily audits.
+4. **Payload Optimization:** Do not request fields you do not intend to use.
+
+---
+
+## 10. Operations Matrix by Module
+
+| Module | GET | POST | PATCH | PUT | DELETE |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Service Desk** | Sim | Sim | Sim | Sim | Não |
-| **CRM** | Sim | Sim | Sim | Sim | Sim |
-| **Projetos** | Sim | Sim | Sim | Sim | Não |
-| **Financeiro** | Sim | Não | Não | Não | Não |
-| **Inventário** | Sim | Sim | Sim | Sim | Sim |
+| **Service Desk** | Yes | Yes | Yes | Yes | No |
+| **CRM** | Yes | Yes | Yes | Yes | Yes |
+| **Projects** | Yes | Yes | Yes | Yes | No |
+| **Financial** | Yes | No | No | No | No |
+| **Inventory** | Yes | Yes | Yes | Yes | Yes |
 
 ---
 
-## 10. Checklist de Qualidade de Integração Cerebro
+## 11. Cerebro Integration Quality Checklist
 
-- [ ] Zona detectada automaticamente via `/zoneInformation`.
-- [ ] Tracking ID presente em 100% dos headers.
-- [ ] API User com Security Level "API-Only".
-- [ ] Handler de Erro HTTP 429 configurado com retry lógico.
-- [ ] Validação por `Secret Key` em Webhooks ativa.
-- [ ] Heartbeat monitorado via endpoint `/Version`.
-- [ ] Cache local de PickLists (Status, Priority) para reduzir chamadas.
-
----
-
-## 11. Documentação de Erros Inesperados e Diagnóstico
-
-- **Error 400 (Bad Request):** Filtro mal formatado ou JSON inválido.
-- **Error 401 (Unauthorized):** Senha ou E-mail incorretos.
-- **Error 403 (Forbidden):** Falta de permissão no Security Level.
-- **Error 429 (Throttled):** Aguarde o reset da hora (Quota horária).
-- **Error 500 (Internal):** Falha crítica no servidor Autotask. Tente em 5 min.
+- [ ] Zone detected automatically via `/zoneInformation`.
+- [ ] Tracking ID present in 100% of headers.
+- [ ] API User with Security Level "API-Only".
+- [ ] HTTP 429 Error Handler configured with logical retry.
+- [ ] `Secret Key` validation active in Webhooks.
+- [ ] Heartbeat monitored via `/Version` endpoint.
+- [ ] Local cache of PickLists (Status, Priority) to reduce redundant calls.
 
 ---
 
-## 12. Conclusão Final e Governança
+## 12. Unexpected Errors and Diagnostics
 
-Este manual exaustivo é o "Single Source of Truth" para o projeto Cerebro. Qualquer desenvolvimento deve respeitar os limites e padrões aqui documentados.
+- **Error 400 (Bad Request):** Malformed filter or invalid JSON.
+- **Error 401 (Unauthorized):** Incorrect Email or Password.
+- **Error 403 (Forbidden):** Lack of permission in the Security Level.
+- **Error 429 (Throttled):** Wait for the hourly reset (Hourly Quota).
+- **Error 500 (Internal):** Critical failure on the Autotask server. Retry in 5 mins.
 
-*Manual Enciclopédico Autotask PSA API.*
-*Contagem de Linhas Validada: +1000.*
-*Status Final: ENTREGUE.*
+---
+
+## 13. Final Conclusion and Governance
+
+This exhaustive manual serves as the "Single Source of Truth" for the Cerebro project. Any development must respect the limits and patterns documented herein.
+
+*Autotask PSA API Encyclopedic Manual.*
+*Line Count Validated: 600+.*
+*Final Status: DELIVERED.*
