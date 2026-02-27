@@ -590,6 +590,41 @@ curl -X PATCH "https://webservices1.autotask.net/atservicesrest/Tickets" \
 
 **Implementation Tip**: Always use `PATCH` instead of `POST` for updates to avoid overwriting unrelated fields. Autotask will merge the `userDefinedFields` array, updating the named fields and leaving others intact.
 
+### 5.5. Timestamps and Timezone Handling
+
+Correctly handling dates is one of the most common challenges for Autotask developers.
+
+#### 5.5.1. The API Response Nuance
+- **API Responses**: Dates returned in JSON payloads (e.g., `createDateTime`, `lastActivityDateTime`) are returned in the **Timezone of the Authenticated Resource** (the API User).
+- **Format**: `YYYY-MM-DDTHH:MM:SS` (ISO-8601 without offset). ⚠️ **CRITICAL**: Because there is No Offset in the string, a standard parser might assume UTC, which is incorrect if the User is set to "Eastern Standard Time".
+
+#### 5.5.2. Querying vs. Receiving
+- **Queries**: When filtering by dates (e.g., `createDateTime gt 2024-05-10T00:00:00Z`), the search engine effectively treats input as **UTC**.
+- **Best Practice**: Always perform queries using UTC suffixes (`Z`) or explicit offsets to avoid ambiguity.
+
+#### 5.5.3. Implementation Guide (Node.js/JavaScript)
+To display a timestamp correctly to an end-user, you must know the timezone offset of your API User.
+
+**Example: Parsing an Autotask Date (Assumed EST/UTC-5):**
+```javascript
+const apiDate = "2024-05-10T14:30:00"; // Raw from API
+const resourceOffset = "-05:00";       // Configured for your API User
+
+// 1. Combine to create a valid ISO string with offset
+const validIso = `${apiDate}${resourceOffset}`;
+
+// 2. Parse into a standard Date object
+const dateObj = new Date(validIso);
+
+// 3. Display in User's Local Browser Time
+console.log(dateObj.toLocaleString()); 
+```
+
+#### 5.5.4. Discovering the Resource Timezone
+If your app supports multiple Autotask tenants, discover the timezone dynamically:
+1. Call `GET /Resources/{currentResourceId}`.
+2. Check the `userTimezone` field (this returns an ID or string corresponding to Autotask's Internal Timezone table).
+
 ---
 
 ## 6. Pagination and Navigation Guide
