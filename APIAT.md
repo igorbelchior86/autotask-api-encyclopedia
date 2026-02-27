@@ -523,14 +523,59 @@ curl -X DELETE "https://webservices1.autotask.net/atservicesrest/Contacts/987654
 - **Permissions**: The authenticated API user must have "Delete" permissions for that specific entity in their Security Level.
 - **Response**: A successful deletion returns an empty 204 No Content or a success confirmation JSON, depending on the zone.
 
-**Key Notes:**
-- The `{id}` must be numeric.
-- If the ID does not exist, the API returns `404 Not Found`.
-- Use this instead of the query/search endpoint when the identifier is already known (e.g., from a Webhook payload or a previous list request).
+### 5.3. Retrieving Child Collections (Parent-Child Pattern)
+To retrieve all records of a child entity associated with a specific parent, use the nested resource pattern. This is the most efficient way to access related data like Notes or Attachments for a specific Ticket.
+
+**Endpoint:** `GET /[ParentEntity]/{parentId}/[ChildEntity]`
+
+**Example: Retrieving all Notes for a specific Ticket:**
+```bash
+curl -X GET "https://webservices1.autotask.net/atservicesrest/Tickets/12345/Notes" \
+     -H "Accept: application/json" \
+     -H "Authorization: Basic [Base64-Credentials]" \
+     -H "ApiIntegrationcode: [Your-Tracking-ID]"
+```
+
+**Common Child Resource Patterns:**
+- `GET /Tickets/{id}/Notes` - All notes for a ticket.
+- `GET /Tickets/{id}/Attachments` - Metadata for all attachments.
+- `GET /Companies/{id}/Contacts` - All contacts for a company.
+- `GET /Projects/{id}/Phases` - All phases within a project.
 
 ---
 
-## 6. Performance and Technical Limits (API SLA)
+## 6. Pagination and Navigation Guide
+
+Autotask REST API uses implicit pagination for all list and query operations to ensure performance.
+
+### 6.1. Page Limits
+- **Maximum Records per Page**: 500.
+- **Default**: If the result set exceeds 500, the response will be truncated.
+
+### 6.2. Iterating with `nextPageUrl`
+The response JSON includes a `pageDetails` object (or similar structure depending on the zone) containing a `nextPageUrl`.
+
+**Typical Response Structure:**
+```json
+{
+  "items": [...],
+  "pageDetails": {
+    "count": 500,
+    "nextPageUrl": "https://webservices1.autotask.net/atservicesrest/Tickets/query?nextId=..."
+  }
+}
+```
+
+**Implementation Logic for Developers:**
+1. Perform the initial request.
+2. Process the `items` array.
+3. Check if `nextPageUrl` is present and not null.
+4. If present, perform a GET request to the exact `nextPageUrl` provided (it contains all necessary query tokens).
+5. Repeat until `nextPageUrl` is missing from the response.
+
+---
+
+## 7. Performance and Technical Limits (API SLA)
 
 ### 6.1. Progressive Throttling
 Autotask manages load through artificial delays.
